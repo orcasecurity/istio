@@ -15,6 +15,14 @@ FROM ${ISTIO_BASE_REGISTRY}/iptables:${BASE_VERSION} AS distroless
 # hadolint ignore=DL3006
 FROM ${BASE_DISTRIBUTION:-debug}
 
+RUN apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y libc++1 \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /tmp/* /var/tmp/* \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /
 
 ARG proxy_version
@@ -36,3 +44,4 @@ COPY ${TARGETARCH:-amd64}/pilot-agent /usr/local/bin/pilot-agent
 
 # The pilot-agent will bootstrap Envoy.
 ENTRYPOINT ["/usr/local/bin/pilot-agent"]
+
