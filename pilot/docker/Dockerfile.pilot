@@ -15,6 +15,15 @@ FROM ${ISTIO_BASE_REGISTRY}/distroless:${BASE_VERSION} AS distroless
 # hadolint ignore=DL3006
 FROM ${BASE_DISTRIBUTION:-debug}
 
+RUN apt-get update \
+  && apt-get upgrade -y \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /tmp/* /var/tmp/* \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN touch /etc/orca_release
+
 ARG TARGETARCH
 COPY ${TARGETARCH:-amd64}/pilot-discovery /usr/local/bin/pilot-discovery
 
